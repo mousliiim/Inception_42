@@ -6,7 +6,7 @@
 #    By: mmourdal <mmourdal@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/10 03:16:15 by mmourdal          #+#    #+#              #
-#    Updated: 2023/10/08 05:49:46 by mmourdal         ###   ########.fr        #
+#    Updated: 2023/10/08 22:14:50 by mmourdal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,16 +65,16 @@ all :
 				exit 1; \
 			fi
 			@$(WHALE)
-			@if [ -d /home/mmourdal/data/mariadb ]; then \
+			@if [ -d /home/${USER}/data/mariadb ]; then \
         		echo "[✅] The directory mariadb already exists"; \
     		else \
-        		mkdir -p /home/mmourdal/data/mariadb; \
+        		mkdir -p /home/${USER}/data/mariadb; \
 				echo "[✅] The directory has mariadb just been created"; \
     		fi
-			@if [ -d /home/mmourdal/data/wordpress ]; then \
+			@if [ -d /home/${USER}/data/wordpress ]; then \
         		echo "[✅] The directory already exists"; \
     		else \
-        		mkdir -p /home/mmourdal/data/wordpress; \
+        		mkdir -p /home/${USER}/data/wordpress; \
 				echo "[✅] The directory has just been created"; \
     		fi
 			bash -c "cd srcs; docker compose up -d"

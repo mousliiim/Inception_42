@@ -59,6 +59,7 @@ services:
           condition: service_healthy
 
 networks:
+
   inception:
 
 volumes:
@@ -69,7 +70,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /home/mmourdal/data/mariadb
+      device: /home/${USER}/data/mariadb
 
   www-data:
     name: www-data
@@ -77,4 +78,4 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /home/mmourdal/data/wordpress
+      device: /home/${USER}/data/wordpress
