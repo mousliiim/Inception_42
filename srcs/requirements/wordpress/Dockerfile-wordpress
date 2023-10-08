@@ -12,9 +12,6 @@ RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh
 	mkdir -p /var/www/wp && \
 	apk add --no-cache php81-cgi \
 	php81-phar \
-	php81-pear \
-	php81-dev \
-    php81-ctype \
 	php81-curl \
     php81-fpm \ 
     php81-opcache \
@@ -23,9 +20,7 @@ RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh
     php81-zlib \
     php81-curl \
     php81-mbstring \
-    php81-json \
     php81-session \
-    php81-tokenizer \
     php81-redis \
     mariadb-client
 
@@ -50,7 +45,7 @@ WORKDIR /var/www/wp
 
 RUN wp core download --version=${WORDPRESS_VERSION} && \
     chown -R ${WP_USER}:${WP_USER} /var/www/wp && \
-    chmod -R 775 /var/www/wp
+    chmod -R 755 /var/www/wp
 
 USER ${WP_USER}:${WP_USER}
 
