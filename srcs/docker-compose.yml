@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+
+  mariadb:
+    container_name: mariadb
+    restart: unless-stopped
+    build:
+      context: requirements/mariadb
+      dockerfile: Dockerfile-mariadb
+    image: mariadb:inception
+    volumes:
+      - data:/var/lib/mysql
+    env_file: ".env"
+    networks:
+      - inception
+    healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+        interval: 10s
+        timeout: 5s
+        retries: 3
+  
+  wordpress:
+    container_name: wordpress
+    restart: unless-stopped
+    build:
+      context: requirements/wordpress
+      dockerfile: Dockerfile-wordpress
+    image: wordpress:inception
+    volumes:
+      - www-data:/var/www/wp
+    env_file: ".env"
+    networks:
+      - inception
+    depends_on:
+        mariadb:
+          condition: service_healthy
+    healthcheck:
+        test: ["CMD-SHELL", "wp core is-installed --allow-root"]
+        interval: 20s
+        timeout: 10s
+        retries: 3
+  
+  nginx:
+    container_name: nginx
+    restart: unless-stopped
+    build:
+      context: requirements/nginx
+      dockerfile: Dockerfile-nginx
+    image: nginx:inception
+    volumes:
+      - www-data:/var/www/wp
+    networks:
+      - inception
+    ports:
+      - 443:443
+    depends_on:
+        wordpress:
+          condition: service_healthy
+
+networks:
+  inception:
+
+volumes:
+
+  data:
+    name: data
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/mmourdal/data/mariadb
+
+  www-data:
+    name: www-data
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/mmourdal/data/wordpress

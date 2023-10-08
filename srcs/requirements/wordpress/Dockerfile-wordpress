@@ -1,0 +1,57 @@
+FROM alpine:3.18
+
+ARG PHP_VERSION=8.1.23-r0 \
+	WORDPRESS_VERSION=6.3 \
+	WP_USER=wp-user
+
+RUN addgroup -S -g 1979 ${WP_USER} && adduser -S ${WP_USER} -G ${WP_USER}
+
+RUN apk update -U && apk add --no-cache vim bash curl wget php81=${PHP_VERSION}
+
+RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+	mkdir -p /var/www/wp && \
+	apk add --no-cache php81-cgi \
+	php81-phar \
+	php81-pear \
+	php81-dev \
+    php81-ctype \
+	php81-curl \
+    php81-fpm \ 
+    php81-opcache \
+    php81-gd \
+    php81-mysqli \
+    php81-zlib \
+    php81-curl \
+    php81-mbstring \
+    php81-json \
+    php81-session \
+    php81-tokenizer \
+    php81-redis \
+    mariadb-client
+
+COPY ./conf/www.conf /etc/php81/php-fpm.d/www.conf
+
+COPY ./tools /var/www/wp
+
+RUN mkdir -p /var/log/php-fpm/ && \
+	touch /var/log/php-fpm/error.log && \
+	chown -R ${WP_USER}:${WP_USER} /usr/local/bin/wp && \
+	chmod +x /usr/local/bin/wp && \
+	chown ${WP_USER}:${WP_USER} /var/www/wp/init.sh && \
+    chmod +x /var/www/wp/init.sh && \
+    chown -R ${WP_USER}:${WP_USER} /var/log/php81 && \
+    chmod -R 755 /var/log/php81 && \
+    chown -R ${WP_USER}:${WP_USER} /var/log/php-fpm && \
+    chmod -R 755 /var/log/php-fpm && \
+    chown -R ${WP_USER}:${WP_USER} /etc/php81 && \
+    chmod -R 755 /etc/php81
+
+WORKDIR /var/www/wp
+
+RUN wp core download --version=${WORDPRESS_VERSION} && \
+    chown -R ${WP_USER}:${WP_USER} /var/www/wp && \
+    chmod -R 775 /var/www/wp
+
+USER ${WP_USER}:${WP_USER}
+
+ENTRYPOINT ["./init.sh"]
