@@ -6,7 +6,7 @@
 #    By: mmourdal <mmourdal@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/10 03:16:15 by mmourdal          #+#    #+#              #
-#    Updated: 2023/10/08 22:14:50 by mmourdal         ###   ########.fr        #
+#    Updated: 2023/10/09 00:53:20 by mmourdal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -66,16 +66,22 @@ all :
 			fi
 			@$(WHALE)
 			@if [ -d /home/${USER}/data/mariadb ]; then \
-        		echo "[✅] The directory mariadb already exists"; \
+        		echo "[✅] The directory mariadb in data already exists"; \
     		else \
         		mkdir -p /home/${USER}/data/mariadb; \
-				echo "[✅] The directory has mariadb just been created"; \
+				echo "[✅] The directory mariadb in data just been created"; \
     		fi
 			@if [ -d /home/${USER}/data/wordpress ]; then \
-        		echo "[✅] The directory already exists"; \
+        		echo "[✅] The directory wordpress in data already exists"; \
     		else \
         		mkdir -p /home/${USER}/data/wordpress; \
-				echo "[✅] The directory has just been created"; \
+				echo "[✅] The directory wordpress in data has just been created"; \
+    		fi
+			@if [ -d /home/${USER}/data/adminer ]; then \
+        		echo "[✅] The directory adminer in data already exists"; \
+    		else \
+        		mkdir -p /home/${USER}/data/adminer; \
+				echo "[✅] The directory adminer in data just been created"; \
     		fi
 			bash -c "cd srcs; docker compose up -d"
 
@@ -90,10 +96,11 @@ volumes:
 
 fclean: 	clean
 			bash -c "docker system prune --all --force" \
-			bash -c "docker image prune --force; docker rmi wordpress:inception nginx:inception mariadb:inception" \
+			bash -c "docker image prune --force; docker rmi wordpress:inception nginx:inception mariadb:inception adminer:inception" \
 
 rmvolumes:
-			bash -c "docker volume rm www-data data"
+			bash -c "docker volume rm www-data data www-adminer" \
+			bash -c "rm -rf /home/${USER}/data"
 
 images:
 			bash -c "docker images"

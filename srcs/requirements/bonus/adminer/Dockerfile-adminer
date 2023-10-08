@@ -1,0 +1,39 @@
+FROM alpine:3.18
+
+ARG PHP_VERSION=8.1.23-r0 \
+	ADMINER_USER=adminer
+
+RUN addgroup -S -g 2003 ${ADMINER_USER} && adduser -S ${ADMINER_USER} -G ${ADMINER_USER}
+
+RUN apk update -U && apk add --no-cache vim bash curl wget php81=${PHP_VERSION} 
+
+RUN apk add --no-cache php81-cgi \
+	php81-curl \
+    php81-fpm \ 
+    php81-opcache \
+    php81-gd \
+    php81-mysqli \
+    php81-zlib \
+    php81-curl \
+    php81-mbstring \
+    php81-session
+
+COPY ./conf/www.conf /etc/php81/php-fpm.d/www.conf
+
+RUN mkdir -p /var/www/adminer && wget -O /var/www/adminer/index.php https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1-mysql.php
+
+RUN mkdir -p /var/log/php-fpm/ && \
+	touch /var/log/php-fpm/error.log && \
+    chown -R ${ADMINER_USER}:${ADMINER_USER} /var/log/php81 && \
+    chmod -R 755 /var/log/php81 && \
+    chown -R ${ADMINER_USER}:${ADMINER_USER} /var/log/php-fpm && \
+    chmod -R 755 /var/log/php-fpm && \
+    chown -R ${ADMINER_USER}:${ADMINER_USER} /etc/php81 && \
+    chmod -R 755 /etc/php81
+
+RUN chmod -R 755 /var/www/adminer && \
+    chown -R ${ADMINER_USER}:${ADMINER_USER} /var/www/adminer
+
+USER ${ADMINER_USER}:${ADMINER_USER}
+
+ENTRYPOINT ["php-fpm81", "-F"]
