@@ -13,10 +13,17 @@ RUN apk update -U && \
 
 RUN npm install -g @vue/cli
 
+COPY ./tools /var/www/vue-app
+
 WORKDIR /var/www/vue-app
 
-RUN git clone https://github.com/hanu-developer/docker-vuejs.git
+RUN chown ${VUE_USER}:${VUE_USER} /var/www/vue-app/init.sh && \
+    chmod +x /var/www/vue-app/init.sh && \
+    chown -R ${VUE_USER}:${VUE_USER} /var/www/vue-app/ && \
+    chmod -R 755 /var/www/vue-app/
 
-EXPOSE 8080
+USER ${VUE_USER}:${VUE_USER}
 
-CMD ["tail", "-f"]
+EXPOSE 4848
+
+ENTRYPOINT ["./init.sh"]

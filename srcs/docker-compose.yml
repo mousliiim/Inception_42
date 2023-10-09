@@ -51,14 +51,17 @@ services:
     volumes:
       - www-data:/var/www/wp
       - www-adminer:/var/www/adminer
-      - www-vuejs:/var/www/vue-app
     networks:
       - inception
     ports:
       - 443:443
+      - 8080:8080
+      - 4545:4545
     depends_on:
         wordpress:
           condition: service_healthy
+        vue-js:
+          condition: service_started
     
   adminer:
     container_name: adminer
@@ -76,7 +79,7 @@ services:
         condition: service_healthy
 
   vue-js:
-    container-name: vue-js
+    container_name: vue-js
     restart: unless-stopped
     build:
       context: requirements/bonus/vue-js
@@ -84,20 +87,14 @@ services:
     image: vue-js:inception
     volumes:
       - www-vuejs:/var/www/vue-app
-    ports:
-      - 4848:8080
     networks:
       - inception
-    depends_on:
-      nginx:
-        condition: service_started
 
 networks:
 
   inception:
 
 volumes:
-
 
   data:
     name: data

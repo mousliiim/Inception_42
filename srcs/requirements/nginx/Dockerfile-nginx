@@ -17,6 +17,7 @@ RUN mkdir -p /etc/nginx/ssl && \
 	mkdir -p /var/log/nginx/adminer && \
     touch /var/log/nginx/adminer/access.log && \
     touch /var/log/nginx/adminer/error.log && \
+    mkdir -p /var/log/nginx/vuejs && \
     touch /var/log/nginx/vuejs/access.log && \
     touch /var/log/nginx/vuejs/error.log
 
@@ -34,7 +35,5 @@ RUN chmod -R 755 /var/lib/nginx && \
 USER ${C_USER}:${C_USER}
 
 EXPOSE 443
-EXPOSE 8080
-EXPOSE 4848
 
 CMD ["nginx", "-g", "daemon off;"]

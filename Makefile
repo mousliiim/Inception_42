@@ -95,24 +95,24 @@ clean:
 			bash -c "cd srcs; docker compose down"
 
 networks:
-			bash -c "docker network ls"
+			@bash -c "docker network ls"
 
 volumes:
-			bash -c "docker volume ls"
+			@bash -c "docker volume ls"
 
 fclean: 	clean
 			bash -c "docker system prune --all --force" \
-			bash -c "docker image prune --force; docker rmi wordpress:inception nginx:inception mariadb:inception adminer:inception" \
+			bash -c "docker image prune --force; docker rmi wordpress:inception nginx:inception mariadb:inception adminer:inception vue-js:inception" \
 
 rmvolumes:
-			bash -c "docker volume rm www-data data www-adminer" \
+			bash -c "docker volume rm www-data data www-adminer www-vuejs" \
 			bash -c "rm -rf /home/${USER}/data"
 
 images:
-			bash -c "docker images"
+			@bash -c "docker images"
 
 logs:
-			bash -c "docker compose logs"
+			@bash -c "docker compose logs"
 
 re: 		fclean all
 
