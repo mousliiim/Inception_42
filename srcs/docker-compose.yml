@@ -51,11 +51,11 @@ services:
     volumes:
       - www-data:/var/www/wp
       - www-adminer:/var/www/adminer
+      - www-vuejs:/var/www/vue-app
     networks:
       - inception
     ports:
       - 443:443
-      - 8080:8080
     depends_on:
         wordpress:
           condition: service_healthy
@@ -75,19 +75,29 @@ services:
       mariadb:
         condition: service_healthy
 
+  vue-js:
+    container-name: vue-js
+    restart: unless-stopped
+    build:
+      context: requirements/bonus/vue-js
+      dockerfile: Dockerfile-vuejs
+    image: vue-js:inception
+    volumes:
+      - www-vuejs:/var/www/vue-app
+    ports:
+      - 4848:8080
+    networks:
+      - inception
+    depends_on:
+      nginx:
+        condition: service_started
+
 networks:
 
   inception:
 
 volumes:
 
-  www-adminer:
-    name: www-adminer
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /home/${USER}/data/adminer
 
   data:
     name: data
@@ -105,3 +115,18 @@ volumes:
       type: none
       device: /home/${USER}/data/wordpress
   
+  www-adminer:
+    name: www-adminer
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/adminer
+
+  www-vuejs:
+    name: www-vuejs
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/vue-app

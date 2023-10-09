@@ -83,6 +83,12 @@ all :
         		mkdir -p /home/${USER}/data/adminer; \
 				echo "[✅] The directory adminer in data just been created"; \
     		fi
+			@if [ -d /home/${USER}/data/vue-app ]; then \
+        		echo "[✅] The directory vue-app in data already exists"; \
+    		else \
+        		mkdir -p /home/${USER}/data/vue-app; \
+				echo "[✅] The directory vue-app in data just been created"; \
+    		fi
 			bash -c "cd srcs; docker compose up -d"
 
 clean:
