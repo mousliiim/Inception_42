@@ -36,6 +36,6 @@ RUN chmod -R 755 /var/www/adminer && \
 
 USER ${ADMINER_USER}:${ADMINER_USER}
 
-EXPOSE 8080
+EXPOSE 9000
 
 ENTRYPOINT ["php-fpm81", "-F"]

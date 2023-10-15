@@ -1,0 +1,30 @@
+FROM alpine:3.18
+
+ARG REDIS_VERSION=7.0.13-r0 \
+    REDIS_OPENRC_VERSION=7.0.13-r0 \
+	REDIS_USER=redis
+
+RUN addgroup -S -g 2000 ${REDIS_USER} && adduser -S ${REDIS_USER} -G ${REDIS_USER}
+
+RUN apk update -U && apk add --no-cache vim bash curl wget
+
+RUN apk add --no-cache redis=${REDIS_VERSION} \
+    redis-openrc=${REDIS_OPENRC_VERSION}
+
+COPY ./conf /etc/
+
+COPY ./tools /
+
+RUN mkdir -p /var/lib/redis && \
+    chown -R ${REDIS_USER}:${REDIS_USER} /var/lib/redis && \
+    chmod -R 755 /var/lib/redis && \
+    chown ${REDIS_USER}:${REDIS_USER} /etc/redis.conf && \
+    chmod 755 /etc/redis.conf && \
+    chown ${REDIS_USER}:${REDIS_USER} /init.sh && \
+    chmod +x /init.sh
+
+USER ${REDIS_USER}:${REDIS_USER}
+
+EXPOSE 6379
+
+ENTRYPOINT ["./init.sh"]

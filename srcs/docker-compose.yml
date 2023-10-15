@@ -35,6 +35,8 @@ services:
     depends_on:
         mariadb:
           condition: service_healthy
+        redis:
+          condition: service_healthy
     healthcheck:
         test: ["CMD-SHELL", "wp core is-installed --allow-root"]
         interval: 20s
@@ -55,8 +57,6 @@ services:
       - inception
     ports:
       - 443:443
-      - 8080:8080
-      - 4545:4545
     depends_on:
         wordpress:
           condition: service_healthy
@@ -87,8 +87,26 @@ services:
     image: vue-js:inception
     volumes:
       - www-vuejs:/var/www/vue-app
+    ports:
+      - 4848:4848
     networks:
       - inception
+
+  redis:
+    container_name: redis
+    restart: unless-stopped
+    build:
+      context: requirements/bonus/redis
+      dockerfile: Dockerfile-redis
+    image: redis:inception
+    env_file: ".env"
+    networks:
+      - inception
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 networks:
 

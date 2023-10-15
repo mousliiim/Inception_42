@@ -15,7 +15,6 @@
 ################################################################################
 
 DOCKER_BLUE_BOLD = \033[1;96m
-BLINK = \033[5m
 END		= \033[0m     
 
 ART_NAME_1 =                        \#\#         .\n
@@ -61,6 +60,9 @@ all :
 				echo "WORDPRESS_AUTHOR_USERNAME=authoruser"; \
 				echo "WORDPRESS_AUTHOR_PASS=authorpass"; \
 				echo "WORDPRESS_AUTHOR_MAIL=author@example.com"; \
+				echo ""; \
+				echo "# REDIS"; \
+				echo "REDIS_PASSWORD=redispassword"; \
 				echo ""; \
 				exit 1; \
 			fi
