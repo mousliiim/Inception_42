@@ -2,9 +2,9 @@ FROM alpine:3.18
 
 ARG PHP_VERSION=8.1.23-r0 \
 	WORDPRESS_VERSION=6.3 \
-	WP_USER=wp-user
+	WP_USER=www-data
 
-RUN addgroup -S -g 1979 ${WP_USER} && adduser -S ${WP_USER} -G ${WP_USER}
+RUN delgroup ${WP_USER} && addgroup -S -g 1000 ${WP_USER} && adduser -S ${WP_USER} -G ${WP_USER}
 
 RUN apk update -U && apk add --no-cache vim bash curl wget php81=${PHP_VERSION}
 
@@ -51,7 +51,7 @@ WORKDIR /var/www/wp
 
 RUN wp core download --version=${WORDPRESS_VERSION} && \
     chown -R ${WP_USER}:${WP_USER} /var/www/wp && \
-    chmod -R 755 /var/www/wp
+    chmod -R 775 /var/www/wp
 
 USER ${WP_USER}:${WP_USER}
 

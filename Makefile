@@ -85,12 +85,6 @@ all :
         		mkdir -p /home/${USER}/data/adminer; \
 				echo "[✅] The directory adminer in data just been created"; \
     		fi
-			@if [ -d /home/${USER}/data/vue-app ]; then \
-        		echo "[✅] The directory vue-app in data already exists"; \
-    		else \
-        		mkdir -p /home/${USER}/data/vue-app; \
-				echo "[✅] The directory vue-app in data just been created"; \
-    		fi
 			bash -c "cd srcs; docker compose up -d"
 
 clean:
@@ -107,7 +101,7 @@ fclean: 	clean
 			bash -c "docker image prune --force; docker rmi wordpress:inception nginx:inception mariadb:inception adminer:inception vue-js:inception" \
 
 rmvolumes:
-			bash -c "docker volume rm www-data data www-adminer www-vuejs" \
+			bash -c "docker volume rm www-data data www-adminer" \
 			bash -c "rm -rf /home/${USER}/data"
 
 images:

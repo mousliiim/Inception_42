@@ -1,0 +1,26 @@
+FROM alpine:3.18
+
+ARG OPENRC_VERSION=0.48-r0 \
+    VSFTPD_VERSION=3.0.5-r2 \
+    VSFTPD_OPENRC_VERSION=3.0.5-r2 \
+    OPENSSL_VERSION=3.1.3-r0
+
+RUN apk update -U && apk add --no-cache vim bash curl wget
+
+COPY ./tools /
+
+RUN chmod +x ./init.sh && \
+    apk add --no-cache openrc=${OPENRC_VERSION} \
+    vsftpd-openrc=${VSFTPD_OPENRC_VERSION} \
+    vsftpd=${VSFTPD_VERSION} \
+    openssl=${OPENSSL_VERSION}
+
+RUN mkdir -p /etc/vsftpd/ssl && \
+	openssl req -x509 -nodes -out /etc/vsftpd/ssl/vsftpd.crt -keyout /etc/vsftpd/ssl/vsftpd.key -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=mmourdal.42.fr/UID=mmourdal" && \
+    touch /var/log/vsftpd.log
+
+COPY ./conf /etc/vsftpd/
+
+EXPOSE 20 21 990 989 30000-30010
+
+ENTRYPOINT ["./init.sh"]

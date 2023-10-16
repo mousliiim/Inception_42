@@ -60,8 +60,6 @@ services:
     depends_on:
         wordpress:
           condition: service_healthy
-        vue-js:
-          condition: service_started
     
   adminer:
     container_name: adminer
@@ -85,8 +83,6 @@ services:
       context: requirements/bonus/vue-js
       dockerfile: Dockerfile-vuejs
     image: vue-js:inception
-    volumes:
-      - www-vuejs:/var/www/vue-app
     ports:
       - 4848:4848
     networks:
@@ -107,6 +103,28 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
+  vsftpd:
+    container_name: vsftpd
+    restart: unless-stopped
+    build:
+      context: requirements/bonus/vsftpd
+      dockerfile: Dockerfile-vsftpd
+    image: vsftpd:inception
+    volumes:
+      - www-data:/app/wordpress
+    env_file: ".env"
+    ports:
+      - 20:20
+      - 21:21
+      - 990:990
+      - 989:989
+      - 30000-30010:30000-30010
+    depends_on:
+      wordpress:
+        condition: service_healthy
+    networks:
+      - inception
 
 networks:
 
@@ -137,11 +155,3 @@ volumes:
       o: bind
       type: none
       device: /home/${USER}/data/adminer
-
-  www-vuejs:
-    name: www-vuejs
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /home/${USER}/data/vue-app

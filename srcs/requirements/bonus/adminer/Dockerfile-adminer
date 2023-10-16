@@ -3,7 +3,7 @@ FROM alpine:3.18
 ARG PHP_VERSION=8.1.23-r0 \
 	ADMINER_USER=adminer
 
-RUN addgroup -S -g 2003 ${ADMINER_USER} && adduser -S ${ADMINER_USER} -G ${ADMINER_USER}
+RUN addgroup -S -g 1000 ${ADMINER_USER} && adduser -S ${ADMINER_USER} -G ${ADMINER_USER}
 
 RUN apk update -U && apk add --no-cache vim bash curl wget php81=${PHP_VERSION} 
 

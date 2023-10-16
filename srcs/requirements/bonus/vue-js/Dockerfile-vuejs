@@ -1,24 +1,14 @@
 FROM alpine:3.18
 
-ARG VUE_USER=vuejs-user
+RUN apk update -U && apk add --no-cache vim bash curl wget git nodejs npm
 
-RUN addgroup -S -g 2011 ${VUE_USER} && adduser -S ${VUE_USER} -G ${VUE_USER}
+RUN npm install -g @vue/cli && mkdir -p /var/www/static-site
 
-RUN apk update -U && \
-    apk add --no-cache vim bash curl wget git nodejs npm
+COPY ./tools /var/www/static-site
 
-RUN npm install -g @vue/cli
+WORKDIR /var/www/static-site
 
-COPY ./tools /var/www/vue-app
-
-WORKDIR /var/www/vue-app
-
-RUN chown ${VUE_USER}:${VUE_USER} /var/www/vue-app/init.sh && \
-    chmod +x /var/www/vue-app/init.sh && \
-    chown -R ${VUE_USER}:${VUE_USER} /var/www/vue-app/ && \
-    chmod -R 755 /var/www/vue-app/
-
-USER ${VUE_USER}:${VUE_USER}
+RUN chmod +x init.sh
 
 EXPOSE 4848
 
