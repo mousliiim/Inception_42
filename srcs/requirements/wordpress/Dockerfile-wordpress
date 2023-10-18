@@ -1,4 +1,4 @@
-FROM alpine:3.18
+FROM alpine:3.17
 
 ARG WORDPRESS_VERSION=6.3 \
 	WP_USER=www-data
