@@ -1,15 +1,9 @@
 FROM alpine:3.18
 
-ARG REDIS_VERSION=7.0.13-r0 \
-    REDIS_OPENRC_VERSION=7.0.13-r0 \
-	REDIS_USER=redis
+ARG REDIS_USER=redis-user
 
-RUN addgroup -S -g 2000 ${REDIS_USER} && adduser -S ${REDIS_USER} -G ${REDIS_USER}
-
-RUN apk update -U && apk add --no-cache vim bash curl wget
-
-RUN apk add --no-cache redis=${REDIS_VERSION} \
-    redis-openrc=${REDIS_OPENRC_VERSION}
+RUN addgroup -S ${REDIS_USER} && adduser -S ${REDIS_USER} -G ${REDIS_USER} && \
+    apk update -U && apk add --no-cache vim bash curl wget redis redis-openrc
 
 COPY ./conf /etc/
 

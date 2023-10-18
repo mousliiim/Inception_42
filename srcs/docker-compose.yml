@@ -10,7 +10,7 @@ services:
       dockerfile: Dockerfile-mariadb
     image: mariadb:inception
     volumes:
-      - data:/var/lib/mysql
+      - database:/var/lib/mysql
     env_file: ".env"
     networks:
       - inception
@@ -37,11 +37,6 @@ services:
           condition: service_healthy
         redis:
           condition: service_healthy
-    healthcheck:
-        test: ["CMD-SHELL", "wp core is-installed --allow-root"]
-        interval: 20s
-        timeout: 10s
-        retries: 3
   
   nginx:
     container_name: nginx
@@ -59,7 +54,7 @@ services:
       - 443:443
     depends_on:
         wordpress:
-          condition: service_healthy
+          condition: service_started
     
   adminer:
     container_name: adminer
@@ -83,10 +78,10 @@ services:
       context: requirements/bonus/vue-js
       dockerfile: Dockerfile-vuejs
     image: vue-js:inception
-    ports:
-      - 4848:4848
     networks:
       - inception
+    ports:
+      - 4848:4848
 
   redis:
     container_name: redis
@@ -122,7 +117,21 @@ services:
       - 30000-30010:30000-30010
     depends_on:
       wordpress:
-        condition: service_healthy
+        condition: service_started
+    networks:
+      - inception
+  
+  kuma:
+    container_name: kuma
+    restart: unless-stopped
+    build:
+      context: requirements/bonus/kuma
+      dockerfile: Dockerfile-kuma
+    image: kuma:inception
+    volumes:
+      - www-kuma:/app
+    ports:
+      - 3001:3001
     networks:
       - inception
 
@@ -132,8 +141,8 @@ networks:
 
 volumes:
 
-  data:
-    name: data
+  database:
+    name: database
     driver: local
     driver_opts:
       o: bind
@@ -155,3 +164,13 @@ volumes:
       o: bind
       type: none
       device: /home/${USER}/data/adminer
+
+  www-kuma:
+    name: www-kuma
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/kuma
+
+

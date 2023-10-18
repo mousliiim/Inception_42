@@ -1,11 +1,10 @@
 FROM alpine:3.18
 
-ARG PHP_VERSION=8.1.23-r0 \
-	ADMINER_USER=adminer
+ARG ADMINER_USER=www-data
 
-RUN addgroup -S -g 1000 ${ADMINER_USER} && adduser -S ${ADMINER_USER} -G ${ADMINER_USER}
+RUN delgroup ${ADMINER_USER} && addgroup -S -g 1000 ${ADMINER_USER} && adduser -S ${ADMINER_USER} -G ${ADMINER_USER}
 
-RUN apk update -U && apk add --no-cache vim bash curl wget php81=${PHP_VERSION} 
+RUN apk update -U && apk add --no-cache vim bash curl wget php81
 
 RUN apk add --no-cache php81-cgi \
 	php81-curl \
@@ -31,7 +30,7 @@ RUN mkdir -p /var/log/php-fpm/ && \
     chown -R ${ADMINER_USER}:${ADMINER_USER} /etc/php81 && \
     chmod -R 755 /etc/php81
 
-RUN chmod -R 755 /var/www/adminer && \
+RUN chmod -R 775 /var/www/adminer && \
     chown -R ${ADMINER_USER}:${ADMINER_USER} /var/www/adminer
 
 USER ${ADMINER_USER}:${ADMINER_USER}

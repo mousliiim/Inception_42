@@ -37,7 +37,6 @@ WHALE = printf "\n$(DOCKER_BLUE_BOLD) %27s $(ART_NAME_1) %21s $(ART_NAME_2) %18s
 #                                  MAKEFILE                                    #
 ################################################################################
 
-
 all :
 			@if [ ! -f srcs/.env ]; then \
 				echo "[❌] The .env file does not exist in srcs/"; \
@@ -64,6 +63,10 @@ all :
 				echo "# REDIS"; \
 				echo "REDIS_PASSWORD=redispassword"; \
 				echo ""; \
+				echo "# FTP"; \
+				echo "FTP_USER=your_user"; \
+				echo "FTP_USER_PASSWORD=password"; \
+				echo ""; \
 				exit 1; \
 			fi
 			@$(WHALE)
@@ -85,6 +88,12 @@ all :
         		mkdir -p /home/${USER}/data/adminer; \
 				echo "[✅] The directory adminer in data just been created"; \
     		fi
+			@if [ -d /home/${USER}/data/kuma ]; then \
+        		echo "[✅] The directory kuma in data already exists"; \
+    		else \
+        		mkdir -p /home/${USER}/data/kuma; \
+				echo "[✅] The directory kuma in data just been created"; \
+    		fi
 			bash -c "cd srcs; docker compose up -d"
 
 clean:
@@ -101,7 +110,7 @@ fclean: 	clean
 			bash -c "docker image prune --force; docker rmi wordpress:inception nginx:inception mariadb:inception adminer:inception vue-js:inception" \
 
 rmvolumes:
-			bash -c "docker volume rm www-data data www-adminer" \
+			bash -c "docker volume rm www-data database www-adminer www-kuma" \
 			bash -c "rm -rf /home/${USER}/data"
 
 images:

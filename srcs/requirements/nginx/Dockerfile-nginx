@@ -4,7 +4,7 @@ ARG C_USER=www-data
 
 RUN delgroup ${C_USER} && addgroup -S -g 1000 ${C_USER} && adduser -S ${C_USER} -G ${C_USER}
 
-RUN apk update -U && apk add --no-cache bash nginx openssl curl vim
+RUN apk update -U && apk add --no-cache bash nginx openssl
 
 RUN mkdir -p /etc/nginx/ssl && \
 	openssl req -x509 -nodes -out /etc/nginx/ssl/inception.crt -keyout /etc/nginx/ssl/inception.key -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=mmourdal.42.fr/UID=mmourdal" && \
@@ -31,4 +31,4 @@ USER ${C_USER}:${C_USER}
 
 EXPOSE 443
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
