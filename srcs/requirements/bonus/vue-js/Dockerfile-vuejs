@@ -4,6 +4,8 @@ RUN apk update -U && apk add --no-cache vim bash curl wget git nodejs npm
 
 RUN npm install -g @vue/cli && mkdir -p /var/www/static-site
 
+COPY ./conf /var
+
 COPY ./tools /var/www/static-site
 
 WORKDIR /var/www/static-site

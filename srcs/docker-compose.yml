@@ -14,11 +14,6 @@ services:
     env_file: ".env"
     networks:
       - inception
-    healthcheck:
-        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-        interval: 10s
-        timeout: 5s
-        retries: 3
   
   wordpress:
     container_name: wordpress
@@ -34,7 +29,7 @@ services:
       - inception
     depends_on:
         mariadb:
-          condition: service_healthy
+          condition: service_started
         redis:
           condition: service_healthy
   
@@ -69,7 +64,7 @@ services:
       - inception
     depends_on:
       mariadb:
-        condition: service_healthy
+        condition: service_started
 
   vue-js:
     container_name: vue-js

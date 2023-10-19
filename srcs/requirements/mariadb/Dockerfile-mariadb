@@ -2,8 +2,6 @@ FROM alpine:3.17
 
 ARG M_USER=mysql
 
-RUN addgroup -S -g 1000 ${M_USER} && adduser -S ${M_USER} -G ${M_USER}
-
 RUN apk update -U && apk add --no-cache bash curl vim openrc mariadb mariadb-client
 
 COPY ./conf/my.cnf /etc/mysql/my.cnf
@@ -15,7 +13,7 @@ RUN mkdir -p /var/run/mysqld && \
     chmod -R 755 /var/run/mysqld && \
     mkdir -p /var/lib/mysql && \
     chown -R ${M_USER}:${M_USER} /var/lib/mysql && \
-    chmod -R 775 /var/lib/mysql && \
+    chmod -R 755 /var/lib/mysql && \
     mkdir -p /var/log/mysql && \
     chown -R ${M_USER}:${M_USER} /var/log/mysql && \
     chmod -R 755 /var/log/mysql && \
